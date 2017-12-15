@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>画板</title>
+	<style>
+	    .bg-box{
+		   position: relative;
+	    }
+	    .sec-box{
+	    	width: 1000px;
+		    position: absolute;
+		  	left: 0;
+			right: 0;
+			margin-left: auto;
+			margin-right: auto;
+			top: 0;
+			position: relative;
+	    }
+		canvas{
+			position: absolute;
+			top: 110px;
+			left: 0;
+			right: 0;
+			margin-left: auto;
+			margin-right: auto;
+			border:1px solid #000;
+			margin: 0 auto;
+			margin: 0 auto;
+		}
+		/* #clear,section > button:nth-of-type(1){
+			margin-left: 100px;
+			border: 0;
+			background: lightgreen;
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			font-size: 30px;
+            
+		} */
+		/* #return{
+			margin-left: 250px;
+		}
+		#clear{
+			margin-left: 50px;
+		} */
+		section{
+			margin-top: 50px;
+			width: 500px;
+			display: flex;
+			justify-content: space-between;
+		}
+		input{
+
+			margin: 5px;
+			width: 96px;
+			height: 36px;
+			border: 1px solid black;
+		}
+		.color{
+			width: 94px;
+			/* height: 40px; */
+			margin-left: 187px;
+			position: absolute;
+			left: 504px;
+			top: 51px;
+		}
+		/* section > button:nth-of-type(1){
+			background: pink;
+		} */
+		button{
+			margin: 5px;
+            width: 100px;
+			height: 40px;
+		}
+		.active{
+			background: red;
+		}
+	</style>
+</head>
+<body>
+	
+	
+	<div class="bg-box">
+	<div class="sec-box">
+	
+	<input type="text" value="3">
+	
+	<button id="drawStrokeRect">轮廓矩形</button>
+	<button id="drawFillRect">填充矩形</button>
+	<button id="drawStrokePoly">轮廓多边形</button>
+	<button id="drawFillPoly">填充多边形</button>
+	<button id="drawlinearRect">线性渐变矩形</button>
+	<button id="drawFillCircle">实心圆</button>
+	<button id="drawStrokeCircle">轮廓圆</button>
+	<button id="drawradialRect">径向渐变圆</button>
+	<button class="active" id="drawline">直线</button>
+	<button id="drawWord">写字</button>
+	<button id="drawEase">橡皮擦</button>
+	
+	
+	<button id="return">返回</button>
+	<button id="clear">全部清除</button>
+	<input type="color" class="color">
+	</div>
+	<canvas width="993" height="500">
+	
+	</canvas>
+	</div>
+
+</body>
+</html>
+<script>
+	var canvas=document.querySelector('canvas');
+	var paint=canvas.getContext('2d');
+	var btn=document.querySelector('#return');
+    var arr=[];
+    var typebtn=document.querySelectorAll('button[id]')
+        console.log(typebtn);
+    var type='drawline';
+    var n=3;
+    var nobj=document.querySelector('input[type=text]')
+        nobj.onchange=function(){
+        	n=nobj.value;
+        }
+    var btnn=document.querySelector('#clear')
+    var i=0;
+    var t;
+    // function circle(){
+    // 	paint.clearRect(0, 0, canvas.width, canvas.height)
+    // 	i++;
+    // 	paint.beginPath();
+    // 	paint.arc(100, 100, 70, 0, 2*Math.PI/100*i);
+    // 	paint.lineWidth=10;
+    // 	paint.strokeStyle=color;
+    // 	paint.stroke();
+
+    // 	paint.fillText(i+'%',100,100);
+    // 	paint.lineWidth=1;
+    // 	paint.textBaseline='middle';
+    // 	paint.fillStyle='red';
+    // 	paint.textAlign='center';
+    //     t=window.requestAnimationFrame(circle,100)
+    // 	paint.font='40px 宋体';
+    // 	if(i==100){
+    // 		cancelAnimationFrame(t);
+    // 	}
+    // }
+    //     circle();
+
+
+
+    btn.onclick=function(){
+       arr.pop();
+       if(arr.length>=1){
+       	var imgdata=arr[arr.length-1];
+       	paint.putImageData(imgdata,0,0);
+       }else{
+       	alert('无法后退了');
+       	paint.clearRect(0,0,canvas.width,canvas.height);
+       	return;
+       }
+   }
+    typebtn.forEach(value=>{
+         value.onclick=function(){
+               type=this.id;
+               for(var i=0;i<typebtn.length;i++){
+               	  typebtn[i].classList.remove('active')
+               }this.classList.add('active')
+         }
+	})   
+    var colorobj=document.querySelector('input[type=color]');
+	var color='#265';
+	colorobj.onchange=function(){
+		color=this.value;
+	}
+
+    canvas.onmousedown=function(e){
+		let ox=e.offsetX;
+		let oy=e.offsetY;
+		canvas.onmousemove=function(e){
+			let nx=e.offsetX;
+			let ny=e.offsetY;
+			paint.clearRect(0,0,canvas.width,canvas.height);
+			if(arr.length>=1){
+			  let imgdata=arr[arr.length-1];
+			  paint.putImageData(imgdata,0,0);
+			}
+			switch(type){
+				case 'drawline':obj.drawline(ox,oy,nx,ny);break;
+				case 'drawStrokeRect':obj.drawStrokeRect(ox,oy,nx,ny);break;
+				case 'drawFillRect':obj.drawFillRect(ox,oy,nx,ny);break;
+                case 'drawFillPoly':obj.drawFillPoly(ox,oy,nx,ny);break;
+				case 'drawStrokePoly':obj.drawStrokePoly(ox,oy,nx,ny);break;
+				case 'drawlinearRect':obj.drawlinearRect(ox,oy,nx,ny);break;
+				case 'drawFillCircle':obj.drawFillCircle(ox,oy,nx,ny);break;
+				case 'drawStrokeCircle':obj.drawStrokeCircle(ox,oy,nx,ny);break;
+				case 'drawradialRect':obj.drawradialRect(ox,oy,nx,ny);break;
+				case 'drawEase':obj.drawEase(ox,oy,nx,ny);break;
+			}
+		
+	    }							
+		canvas.onmouseup=function(e){
+			if(type=='drawWord'){
+				obj.drawWord(ox,oy)
+			}
+		let	img=paint.getImageData(0,0,canvas.width,canvas.height);
+		    arr.push(img)
+			canvas.onmousemove=null;
+		}
+	}
+
+
+
+    class draw{
+    	constructor(context){
+           this.paint=context;
+           this.lineWidth=1;
+           this.color=color;
+           this.font='50px 宋体'
+    	}
+    	drawline(x1,y1,x2,y2){
+           this.paint.beginPath();
+		   this.paint.moveTo(x1,y1);
+		   this.paint.lineTo(x2,y2);
+		   this.paint.strokeStyle=color;
+		   this.paint.lineWidth=1;
+		   this.paint.stroke();
+    	}
+    	drawStrokeRect(x1,y1,x2,y2){
+    		paint.strokeStyle=color;
+			paint.strokeRect(x1,y1,x2-x1,y2-y1);
+    	}
+        drawFillRect(x1,y1,x2,y2){
+        	paint.fillStyle=color;
+			paint.fillRect(x1,y1,x2-x1,y2-y1);
+        }
+        drawFillPoly(x1,y1,x2,y2){
+        	var ran=360/n;
+			var	r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+				paint.beginPath();
+
+				for(var i=0;i<n;i++){
+					paint.lineTo(x1+Math.cos((i*ran+45)*Math.PI/180)*r, y1+Math.sin((i*ran+45)*Math.PI/180)*r)
+				}
+				paint.closePath();
+				paint.fillStyle=color;
+				paint.fill();
+        }
+        drawStrokePoly(x1,y1,x2,y2){
+        	var ran=360/n;
+			var	r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+				paint.beginPath();
+				for(var i=0;i<n;i++){
+					paint.lineTo(x1+Math.cos((i*ran+45)*Math.PI/180)*r, y1+Math.sin((i*ran+45)*Math.PI/180)*r)
+				}
+				paint.closePath();
+				paint.strokeStyle=color;
+			    paint.stroke();
+        }
+        drawlinearRect(x1,y1,x2,y2){
+        	 var linear=paint.createLinearGradient(x1, y1, x2,y1);
+			    paint.beginPath();
+			    linear.addColorStop(0, 'yellow');
+			    linear.addColorStop(0.3, 'green');
+			    linear.addColorStop(0.6, 'cyan');
+			    linear.addColorStop(1, 'purple');
+			    paint.fillStyle=linear;
+			    paint.fillRect(x1, y1, x2-x1, y2-y1)
+        }
+        drawFillCircle(x1,y1,x2,y2){
+        	var r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+        	    paint.shadowBlur=60;
+			    paint.shadowColor='yellow';
+			    paint.shadowOffsetX=0;
+			    paint.shadowOffsetY=0;
+			    paint.beginPath();
+			    paint.arc(x1, y1, r, 0, 2*Math.PI)
+			    paint.fillStyle=color;
+			    paint.fill();
+        }
+        drawStrokeCircle(x1,y1,x2,y2){
+        	var r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+			    paint.beginPath();
+			    paint.arc(x1, y1, r, 0, 2*Math.PI)
+			    paint.strokeStyle=color;
+			    paint.stroke();
+        }
+        drawradialRect(x1,y1,x2,y2){
+        	var r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+      
+			var radial=paint.createRadialGradient(x1, y1, 0, x1,y1,r);
+			    paint.beginPath();
+			    paint.arc(x1, y1, r, 0, 2*Math.PI)
+			    radial.addColorStop(0, 'pink');
+			    radial.addColorStop(0.2, 'blue');
+			    radial.addColorStop(0.5, 'cyan');
+			    radial.addColorStop(1, 'orange');
+			    paint.fillStyle=radial;
+			    paint.fill();
+        }
+        drawWord(x1,y1,x2,y2){
+        	var str=window.prompt('请输入文字');
+				if(str){
+					paint.fillText(str,x1,y1);
+					paint.font='40px 宋体';
+					paint.textAlign='right';
+					this.paint.fillStyle=color;
+				}
+        }
+        drawEase(x1,y1,x2,y2){
+			this.paint.clearRect(x1,y1,x2-x1,y2-y1)
+		}
+
+    }
+     var obj=new draw(paint);
+   
+
+
+    btnn.onclick=function(){
+ 	    arr.length=0;
+       	paint.clearRect(0, 0, canvas.width, canvas.height);
+       	btnn.style.outline='none';
+       }
+
+</script>
